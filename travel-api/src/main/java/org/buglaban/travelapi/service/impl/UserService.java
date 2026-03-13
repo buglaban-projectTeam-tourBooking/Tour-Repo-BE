@@ -19,7 +19,7 @@ import org.buglaban.travelapi.util.UserType;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class UserService implements IUserService {
     private final IUserRepository iUserRepository;
     private final IRoleRepository iRoleRepository;
     private final ModelMapper mapper;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
     @Override
     public long userRegister(RegisterRequestDTO requestDTO) {
@@ -126,6 +126,14 @@ public class UserService implements IUserService {
 
     @Override
     public void resetPassword(long userId, ChangePasswordRequest changePasswordRequest) {
-
+        Optional<User> user = iUserRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new DataNotFoundException("Data not found");
+        }
+        if (user.get().getPasswordHash().equals(changePasswordRequest.getOldPassword())) {
+            User us = user.get();
+            us.setPasswordHash(changePasswordRequest.getNewPassword());
+            iUserRepository.save(us);
+        }
     }
 }
