@@ -1,7 +1,6 @@
 package org.buglaban.travelapi.model;
 
 // TOUR ENTITY - Tour du lịch (Entity chính của hệ thống)
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.buglaban.travelapi.util.TourStatus;
@@ -67,7 +66,6 @@ public class Tour extends AbstractEntity {
 
     @Column(name = "video_url", length = 500)
     private String videoUrl;
-
 
     // Trạng thái & SEO
     @Enumerated(EnumType.STRING)

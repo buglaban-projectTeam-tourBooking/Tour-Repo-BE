@@ -75,7 +75,7 @@ public class UserController {
             iUserService.deleteUser(id);
             return new ResponseData<>(HttpStatus.OK.value(), "User delete successfully");
         } catch (Exception e) {
-            log.error("errorMessage = {}", e.getMessage(), e.getCause());
+//            log.error("errorMessage = {}", e.getMessage(), e.getCause());
             return new ResponseFailure(HttpStatus.BAD_REQUEST.value(), "User delete fail");
         }
     }

@@ -50,7 +50,7 @@ public class Order extends AbstractEntity {
 
     // Thanh toán
     @Column(name = "payment_method", length = 50)
-    private String paymentMethod; // cash, bank_transfer, credit_card, momo, vnpay
+    private String paymentMethod; // cash, vnpay
 
     @Column(name = "payment_date")
     private LocalDateTime paymentDate;
