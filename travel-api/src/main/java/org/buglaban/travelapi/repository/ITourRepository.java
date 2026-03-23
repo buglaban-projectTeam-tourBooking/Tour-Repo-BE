@@ -2,6 +2,8 @@ package org.buglaban.travelapi.repository;
 
 import org.buglaban.travelapi.model.Tour;
 import org.buglaban.travelapi.util.TourStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +33,10 @@ public interface ITourRepository extends JpaRepository<Tour, Long>, JpaSpecifica
             "WHERE t.status = :status " +
             "ORDER BY t.id DESC", nativeQuery = true)
     List<Tour> findRelatedTours(@Param("status") TourStatus status);
+
+    List<Tour> findByCreatedAtAfter(LocalDateTime date);
+    Page<Tour> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+    // hoặc
+    @Query("SELECT t FROM Tour t WHERE t.createdAt > :date")
+    List<Tour> findRecentTours(@Param("date") LocalDateTime date);
 }
