@@ -83,7 +83,7 @@ public class Tour extends AbstractEntity {
     // Quan hệ Many-to-One với User (created_by)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
-    private User createdBy;
+    private User author;
 
     // Quan hệ One-to-Many với TourSchedule
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)

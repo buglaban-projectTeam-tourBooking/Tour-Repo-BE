@@ -19,7 +19,7 @@ public class TourDetail extends AbstractEntity{
     private String dayTitle;
     @Column(name = "dep", nullable = false)
     private String dep;
-    @Column(name = "description",columnDefinition = "TEXT", nullable = false)
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
     @Column(name = "image", length = 500)
     private String image;

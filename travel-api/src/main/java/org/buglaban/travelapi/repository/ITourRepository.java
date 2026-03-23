@@ -25,6 +25,9 @@ public interface ITourRepository extends JpaRepository<Tour, Long>, JpaSpecifica
     @Query("UPDATE Tour t SET t.viewCount = t.viewCount + 1 WHERE t.id = :id")
     void incrementViewCount(@Param("id") Long id);
 
-    @Query("SELECT t FROM Tour t JOIN FETCH t.category WHERE t.status = :status ORDER BY t.createdAt DESC")
+    @Query(value = "SELECT t.* FROM tours t " +
+            "INNER JOIN categories c ON t.category_id = c.id " +
+            "WHERE t.status = :status " +
+            "ORDER BY t.id DESC", nativeQuery = true)
     List<Tour> findRelatedTours(@Param("status") TourStatus status);
 }

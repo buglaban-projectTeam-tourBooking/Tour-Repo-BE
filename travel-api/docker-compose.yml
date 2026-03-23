@@ -1,6 +1,4 @@
-
 services:
-
   postgres:
     image: postgres
     container_name: postgres
@@ -8,7 +6,6 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: tour_service_db
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
@@ -16,21 +13,21 @@ services:
     ports:
       - '5432:5432'
     networks:
-      - backend
+      - backend          # ← ADD THIS
 
   api-service:
     container_name: api-service
     build:
       context: ./
       dockerfile: Dockerfile
-    depends_on:
-      - postgres
     env_file:
       - .env
     ports:
-      - '8080:8080'
+      - '8081:8081'
     networks:
       - backend
+    depends_on:          # ← OPTIONAL but helpful
+      - postgres
 
 networks:
   backend:
