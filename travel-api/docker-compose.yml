@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+      - ./initdb.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - '5432:5432'
+    networks:
+      - backend          # ← ADD THIS
+
+  api-service:
+    container_name: api-service
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - '8081:8081'
+    networks:
+      - backend
+    depends_on:          # ← OPTIONAL but helpful
+      - postgres
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres:
