@@ -379,7 +379,7 @@ public class TourService implements ITourService {
                 .adultPrice(tour.getAdultPrice())
                 .destination(tour.getDestination())
                 .categoryName(tour.getCategory() != null ? tour.getCategory().getCategoryName() : null)
-                .createdByName(tour.getCreatedBy() != null ? tour.getCreatedBy().getFullName() : null)
+                .createdByName(tour.getAuthor() != null ? tour.getAuthor().getFullName() : null)
                 .totalBookings(0L)
                 .availableSchedulesCount(scheduleCount)
                 .build();
