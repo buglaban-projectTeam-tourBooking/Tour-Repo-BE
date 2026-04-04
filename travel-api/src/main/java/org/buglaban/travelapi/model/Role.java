@@ -26,4 +26,8 @@ public class Role extends AbstractEntity {
     // Quan hệ One-to-Many với User
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<User> users = new HashSet<>();
+
+//    public static String ADMIN = "ADMIN";
+//    public static String USER = "USER";
+//    public static String STAFF = "STAFF";
 }

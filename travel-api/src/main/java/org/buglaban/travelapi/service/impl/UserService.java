@@ -1,10 +1,12 @@
 package org.buglaban.travelapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.buglaban.travelapi.components.JwtTokenUtils;
 import org.buglaban.travelapi.dto.request.ChangePasswordRequest;
 import org.buglaban.travelapi.dto.request.LoginRequestDTO;
 import org.buglaban.travelapi.dto.request.RegisterRequestDTO;
 import org.buglaban.travelapi.dto.request.UserRequestDTO;
+import org.buglaban.travelapi.dto.response.LoginResponse;
 import org.buglaban.travelapi.dto.response.PageResponse;
 import org.buglaban.travelapi.dto.response.UserDetailResponseDTO;
 import org.buglaban.travelapi.exception.DataNotFoundException;
@@ -20,6 +22,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +37,9 @@ public class UserService implements IUserService {
     private final IUserRepository iUserRepository;
     private final IRoleRepository iRoleRepository;
     private final ModelMapper mapper;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtils jwtTokenUtils;
 
     @Override
     public long userRegister(RegisterRequestDTO requestDTO) {
@@ -42,8 +50,7 @@ public class UserService implements IUserService {
         User user = User.builder()
                 .fullName(requestDTO.getFullName())
                 .email(requestDTO.getEmail())
-//                .passwordHash(passwordEncoder.encode(requestDTO.getPasswordHash()))
-                .passwordHash(requestDTO.getPasswordHash())
+                .passwordHash(passwordEncoder.encode(requestDTO.getPassword()))
                 .status(UserStatus.ACTIVE)
                 .emailVerified(false)
                 .role(userRole)
@@ -53,13 +60,23 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public long userLogin(LoginRequestDTO requestDTO) {
+    public LoginResponse userLogin(LoginRequestDTO requestDTO) throws Exception {
         Optional<User> optionalUser = iUserRepository.findByEmail(requestDTO.getEmail());
         if(optionalUser.isEmpty()) {
             throw new DataNotFoundException("Wrong email number or password");
         }
+        Role userRole = iRoleRepository.getRoleByIdUser(requestDTO.getEmail());
+        User user = optionalUser.get();
+        if (!passwordEncoder.matches(requestDTO.getPassword(), user.getPasswordHash())){
+            new BadCredentialsException("Wrong email number or password");
+        }
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                requestDTO.getEmail(),requestDTO.getPassword(), user.getAuthorities()
+        );
 
-        return 0;
+        authenticationManager.authenticate(authenticationToken);
+        String token = jwtTokenUtils.generateToken(user);
+        return new LoginResponse(token, userRole.getRoleName().name(), user.getFullName());
     }
 
     @Override
@@ -102,9 +119,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public PageResponse<?> getAllUser(int pageNo, int pageSize) {
+    public PageResponse<UserDetailResponseDTO> getAllUser(int pageNo, int pageSize) {
         Page<User> pageUsers = iUserRepository.findAll(PageRequest.of(pageNo, pageSize));
-        List<UserDetailResponseDTO> responseDTO = pageUsers.stream().map(user -> UserDetailResponseDTO.builder()
+        List<UserDetailResponseDTO> responseDTO = pageUsers.getContent().stream()
+                .map(user -> UserDetailResponseDTO.builder()
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .passwordHash(user.getPasswordHash())
@@ -116,11 +134,12 @@ public class UserService implements IUserService {
                 .build())
                 .toList();
 
-        return PageResponse.builder()
+        return PageResponse.<UserDetailResponseDTO>builder()
                 .page(pageNo)
                 .pageSize(pageSize)
                 .totalPage(pageUsers.getTotalPages())
-                .item(responseDTO)
+                .totalElements(pageUsers.getTotalElements())
+                .items(responseDTO)
                 .build();
     }
 

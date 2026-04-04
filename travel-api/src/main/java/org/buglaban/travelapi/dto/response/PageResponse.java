@@ -1,13 +1,21 @@
 package org.buglaban.travelapi.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Builder
+import java.util.List;
+
 @Getter
-public class PageResponse <T> {
-    int page;
-    int pageSize;
-    int totalPage;
-    T item;
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class PageResponse<T> {
+
+    private int page;
+    private int pageSize;
+    private int totalPage;
+    private long totalElements;
+    private List<T> items;
 }

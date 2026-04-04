@@ -4,14 +4,8 @@ import com.sun.java.accessibility.util.Translator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.buglaban.travelapi.dto.request.ChangePasswordRequest;
-import org.buglaban.travelapi.dto.request.ChangeStatusRequest;
-import org.buglaban.travelapi.dto.request.RegisterRequestDTO;
-import org.buglaban.travelapi.dto.request.UserRequestDTO;
-import org.buglaban.travelapi.dto.response.PageResponse;
-import org.buglaban.travelapi.dto.response.ResponseData;
-import org.buglaban.travelapi.dto.response.ResponseFailure;
-import org.buglaban.travelapi.dto.response.UserDetailResponseDTO;
+import org.buglaban.travelapi.dto.request.*;
+import org.buglaban.travelapi.dto.response.*;
 import org.buglaban.travelapi.model.User;
 import org.buglaban.travelapi.service.IUserService;
 import org.buglaban.travelapi.util.UserStatus;
@@ -30,6 +24,17 @@ public class UserController {
         try {
             long userId = iUserService.userRegister(requestDTO);
             return new ResponseData<>(HttpStatus.CREATED.value(), "User added successfully", userId);
+        } catch (Exception e) {
+            log.error("errorMessage = {}", e.getMessage(), e.getCause());
+            return new ResponseFailure(HttpStatus.BAD_REQUEST.value(), "User added fail");
+        }
+    }
+
+    @PostMapping("login")
+    public ResponseData<?> loginUser (@Valid @RequestBody LoginRequestDTO requestDTO){
+        try {
+            LoginResponse userLogin = iUserService.userLogin(requestDTO);
+            return new ResponseData<>(HttpStatus.CREATED.value(), "User login successfully", userLogin);
         } catch (Exception e) {
             log.error("errorMessage = {}", e.getMessage(), e.getCause());
             return new ResponseFailure(HttpStatus.BAD_REQUEST.value(), "User added fail");

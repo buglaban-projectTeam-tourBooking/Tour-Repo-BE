@@ -75,6 +75,12 @@ public class Tour extends AbstractEntity {
     @Column(name = "view_count")
     private Integer viewCount = 0;
 
+    @Column(name = "rating_average", precision = 3, scale = 2)
+    private BigDecimal ratingAverage;
+
+    @Column(name = "total_reviews")
+    private Integer totalReviews;
+
     // Quan hệ Many-to-One với Category
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

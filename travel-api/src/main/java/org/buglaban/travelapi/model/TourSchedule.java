@@ -40,12 +40,11 @@ public class TourSchedule extends AbstractEntity {
     @Column(name = "note", columnDefinition = "TEXT")
     private String note;
 
-    // Helper methods
-    public Integer getRemainingSeats() {
+    public int getRemainingSeats() {
         return availableSeats - bookedSeats;
     }
 
-    public boolean isFull() {
-        return bookedSeats >= availableSeats;
+    public boolean hasAvailableSeats(int requestedSeats) {
+        return getRemainingSeats() >= requestedSeats;
     }
 }

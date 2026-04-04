@@ -47,4 +47,18 @@ public class Category extends AbstractEntity {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Tour> tours = new HashSet<>();
 
+    /*
+     * Check if this is a root category (no parent)
+     */
+    public boolean isRoot() {
+        return parent == null;
+    }
+
+    /**
+     * Get tour count for this category
+     */
+    public int getTourCount() {
+        return tours != null ? tours.size() : 0;
+    }
+
 }

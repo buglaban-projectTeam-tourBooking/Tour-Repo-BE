@@ -21,5 +21,5 @@ public class RegisterRequestDTO implements Serializable {
     @Email (message = "email invalid format")
     private String email;
     @NotNull (message = "password must be not null")
-    private String passwordHash;
+    private String password;
 }

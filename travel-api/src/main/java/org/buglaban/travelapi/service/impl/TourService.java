@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,7 +38,6 @@ public class TourService implements ITourService {
     private final IReviewRepository reviewRepository;
     private final ModelMapper mapper;
 
-    // ============ PUBLIC ============
 
     @Override
     public Page<TourSummaryDTO> getPublicTours(TourFilterRequestDTO filterDTO) {
@@ -120,7 +120,6 @@ public class TourService implements ITourService {
         return tourRepository.findAll(spec, pageable).map(this::toSummaryDTO);
     }
 
-    // ============ ADMIN ============
 
     @Override
     public Page<AdminTourSummaryDTO> getAdminTours(TourFilterRequestDTO filterDTO) {
@@ -176,12 +175,12 @@ public class TourService implements ITourService {
             List<TourSchedule> schedules = dto.getSchedules().stream().map(s ->
                     TourSchedule.builder()
                             .tour(tour)
-                            .departureDate(s.getDepartureDate())
-                            .returnDate(s.getReturnDate())
+                            .departureDate(LocalDate.parse(s.getDepartureDate()))
+                            .returnDate(LocalDate.parse(s.getReturnDate()))
                             .availableSeats(s.getAvailableSeats())
                             .bookedSeats(0)
                             .note(s.getNote())
-                            .status(s.getStatus() != null ? s.getStatus() : ScheduleStatus.AVAILABLE)
+                            .status(s.getStatus() != null ? ScheduleStatus.valueOf(s.getStatus()) : ScheduleStatus.AVAILABLE)
                             .build()
             ).collect(Collectors.toList());
             scheduleRepository.saveAll(schedules);
@@ -274,12 +273,12 @@ public class TourService implements ITourService {
                 .orElseThrow(() -> new DataNotFoundException("Tour not found: " + tourId));
         TourSchedule schedule = TourSchedule.builder()
                 .tour(tour)
-                .departureDate(dto.getDepartureDate())
-                .returnDate(dto.getReturnDate())
+                .departureDate(LocalDate.parse(dto.getDepartureDate()))
+                .returnDate(LocalDate.parse(dto.getReturnDate()))
                 .availableSeats(dto.getAvailableSeats())
                 .bookedSeats(0)
                 .note(dto.getNote())
-                .status(dto.getStatus() != null ? dto.getStatus() : ScheduleStatus.AVAILABLE)
+                .status(dto.getStatus() != null ? ScheduleStatus.valueOf(dto.getStatus()) : ScheduleStatus.AVAILABLE)
                 .build();
         scheduleRepository.save(schedule);
         return schedule.getId();
@@ -291,7 +290,6 @@ public class TourService implements ITourService {
                 .stream().map(this::toScheduleDTO).collect(Collectors.toList());
     }
 
-    // ============ MAPPERS ============
 
     private TourSummaryDTO toSummaryDTO(Tour tour) {
         return TourSummaryDTO.builder()
