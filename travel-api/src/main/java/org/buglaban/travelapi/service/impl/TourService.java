@@ -129,8 +129,18 @@ public class TourService implements ITourService {
         return tourRepository.findAll(spec, pageable).map(this::toAdminSummaryDTO);
     }
 
+    private String generateSlug(String tourName) {
+        return tourName.toLowerCase()
+                .replaceAll("[^a-z0-9\\s-]", "")
+                .trim()
+                .replaceAll("\\s+", "-");
+    }
+
     @Override
     public Long createTour(AdminTourCreateUpdateDTO dto) {
+        if (dto.getSlug() == null || dto.getSlug().trim().isEmpty()) {
+            dto.setSlug(generateSlug(dto.getTourName()));
+        }
         Tour tour = Tour.builder()
                 .tourName(dto.getTourName())
                 .tourCode(dto.getTourCode())
