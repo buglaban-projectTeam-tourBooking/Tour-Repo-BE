@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.buglaban.travelapi.dto.request.order.OrderCreateRequest;
 import org.buglaban.travelapi.dto.response.PageResponse;
 import org.buglaban.travelapi.dto.response.order.OrderDetailResponse;
+import org.buglaban.travelapi.dto.response.order.OrderItemResponse;
 import org.buglaban.travelapi.dto.response.order.OrderResponse;
 import org.buglaban.travelapi.exception.DataNotFoundException;
 import org.buglaban.travelapi.model.*;
@@ -138,7 +139,16 @@ public class OrderService implements IOrderService {
         Page<Order> orderPage = orderRepository.findByUserId(userId, PageRequest.of(page, size));
 
         List<OrderResponse> responses = orderPage.getContent().stream()
-                .map(order -> mapper.map(order, OrderResponse.class))
+                .map(order -> {
+                    OrderResponse res = mapper.map(order, OrderResponse.class);
+                    String tourName = order.getOrderDetails().stream()
+                            .findFirst()                          // Lấy detail đầu tiên
+                            .map(detail -> detail.getTour())      // Từ detail lấy ra Tour
+                            .map(tour -> tour.getTourName())      // Từ tour lấy ra Name
+                            .orElse("N/A");
+                    res.setTourName(tourName);
+                    return res;
+                })
                 .collect(Collectors.toList());
 
         return PageResponse.<OrderResponse>builder()
@@ -161,7 +171,16 @@ public class OrderService implements IOrderService {
         }
 
         List<OrderResponse> responses = orderPage.getContent().stream()
-                .map(order -> mapper.map(order, OrderResponse.class))
+                .map(order -> {
+                    OrderResponse res = mapper.map(order, OrderResponse.class);
+                    String tourName = order.getOrderDetails().stream()
+                            .findFirst()                          // Lấy detail đầu tiên
+                            .map(detail -> detail.getTour())      // Từ detail lấy ra Tour
+                            .map(tour -> tour.getTourName())      // Từ tour lấy ra Name
+                            .orElse("N/A");
+                    res.setTourName(tourName);
+                    return res;
+                })
                 .collect(Collectors.toList());
 
         return PageResponse.<OrderResponse>builder()

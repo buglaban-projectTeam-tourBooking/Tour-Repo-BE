@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("${api.prefix}/order/")
+@RequestMapping("${api.prefix}/order")
 @RequiredArgsConstructor
 @Slf4j
 public class OrderController {
@@ -112,7 +112,7 @@ public class OrderController {
             @PathVariable Long id,
             @Valid @RequestBody OrderUpdateStatusRequest request) {
         try {
-            orderService.updateOrderStatus(id, request.getStatus());
+            orderService.updateOrderStatus(id, request.getStatus().name());
             return new ResponseData<>(HttpStatus.OK.value(), "Cập nhật trạng thái đơn hàng thành công");
         } catch (Exception e) {
             log.error("Update order status error: {}", e.getMessage(), e);

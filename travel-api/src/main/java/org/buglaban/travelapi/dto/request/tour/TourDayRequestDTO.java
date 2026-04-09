@@ -23,5 +23,5 @@ public class TourDayRequestDTO {
     @NotBlank(message = "Mô tả ngày không được để trống")
     private String description;
 
-    private String image;
+    private String image;   
 }

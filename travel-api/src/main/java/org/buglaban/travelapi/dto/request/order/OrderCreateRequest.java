@@ -2,6 +2,7 @@ package org.buglaban.travelapi.dto.request.order;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,10 +24,10 @@ public class OrderCreateRequest {
     @Positive(message = "Số lượng người lớn phải lớn hơn 0")
     private int adultQuantity;
 
-    @Positive(message = "Số lượng trẻ em phải lớn hơn hoặc bằng 0")
+    @PositiveOrZero(message = "Số lượng trẻ em phải lớn hơn hoặc bằng 0")
     private int childQuantity = 0;
 
-    @Positive(message = "Số lượng em bé phải lớn hơn hoặc bằng 0")
+    @PositiveOrZero(message = "Số lượng em bé phải lớn hơn hoặc bằng 0")
     private int infantQuantity = 0;
 
     @Size(min = 1, message = "Phải có ít nhất một hành khách")

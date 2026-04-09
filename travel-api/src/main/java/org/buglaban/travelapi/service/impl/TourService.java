@@ -395,11 +395,12 @@ public class TourService implements ITourService {
 
     private Sort buildSort(String sort) {
         if (sort == null) return Sort.by(Sort.Direction.DESC, "createdAt");
+
         return switch (sort) {
             case "price_asc" -> Sort.by(Sort.Direction.ASC, "adultPrice");
             case "price_desc" -> Sort.by(Sort.Direction.DESC, "adultPrice");
-            case "newest" -> Sort.by(Sort.Direction.DESC, "created_at");
-            default -> Sort.by(Sort.Direction.DESC, "created_at");
+            case "newest" -> Sort.by(Sort.Direction.DESC, "createdAt");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
         };
     }
 }
