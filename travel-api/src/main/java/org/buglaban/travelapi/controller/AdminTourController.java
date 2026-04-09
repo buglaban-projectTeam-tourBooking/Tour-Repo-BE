@@ -11,6 +11,7 @@ import org.buglaban.travelapi.dto.response.tour.TourDetailDTO;
 import org.buglaban.travelapi.service.ITourService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 public class AdminTourController {
 
     private final ITourService tourService;
-
+    //ok
     @GetMapping
     public ResponseData<?> getAdminTours(TourFilterRequestDTO filterDTO) {
         try {
@@ -46,6 +47,7 @@ public class AdminTourController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseData<?> updateTour(@PathVariable Long id, @RequestBody AdminTourCreateUpdateDTO dto) {
         try {
             tourService.updateTour(id, dto);
